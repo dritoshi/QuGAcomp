@@ -1,0 +1,8 @@
+Package: QuGAcomp
+Title: QuGAcomp: A package for quantitative comparing genome annotations
+Version: 0.99.1
+Author: Itoshi NIKAIDO
+Description: Tools for quantitative comparing genome annotations of short read
+    sequencing
+Maintainer: Itoshi NIKAIDO <dritoshi@gmail.com>
+License: Artistic-2.0

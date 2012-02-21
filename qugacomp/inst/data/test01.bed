@@ -1,0 +1,11 @@
+track name=pairedReads description="Clone Paired Reads" useScore=1
+chr1	1	7	a	1	-
+chr2	2	8	b	2	+
+chr2	3	9	c	3	+
+chr2	4	10	d	4	-
+chr1	5	11	e	5	-
+chr1	6	12	f	6	+
+chr3	7	13	g	7	+
+chr3	8	14	h	8	+
+chr3	9	15	i	9	-
+chr3	10	16	j	10	-

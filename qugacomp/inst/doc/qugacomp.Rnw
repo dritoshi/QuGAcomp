@@ -1,0 +1,110 @@
+%\VignetteIndexEntry{qugacomp}
+%\VignetteDepends{IRanges,GenomicRanges,methods}
+%\VignetteKeywords{qugacomp}
+%\VignettePackage{qugacomp}
+\documentclass[12pt,fullpage]{article}
+
+\usepackage{amsmath,epsfig,pstricks,fullpage}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[authoryear,round]{natbib}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+
+\author{Itoshi Nikaido$^\ddagger$\footnote{dritoshi@gmail.com}}
+\begin{document}
+\title{Using the QuGAcomp package}
+\maketitle
+\begin{center}$^\ddagger$The RIKEN Center for Developmental Biology
+\end{center}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview of QuGAcomp} 
+
+QuGAcomp is quantitative genome annotation comparison tools such as
+ChIP-seq peak files.
+  
+\section{Getting Started using QuGAcomp package}
+
+\subsection{Loading BED and Genome Length files}
+Loading genome annotations from BED file is easy.  \Rfunction{loadBedFile} 
+aquires gene expression profile and then parse the data into \Rclass{GenomicRanges} 
+object.  Usage is quite simple:
+
+<<>>=
+library(QuGAcomp)
+@ 
+
+This loads the QuGAcomp package.
+
+<<>>=
+oct4.bed.file <- file.path(
+  system.file(package="QuGAcomp"),
+  "data",
+  "GSM288346_ES_Oct4.mm9.header.bed"
+)
+sox2.bed.file <- file.path(
+  system.file(package="QuGAcomp"),
+  "data",
+  "GSM288347_ES_Sox2.mm9.header.bed"
+)
+genome.length.file <- file.path(system.file(package="QuGAcomp"), "data", "mm9.info")
+oct4.gr <- loadBedFile(oct4.bed.file, genome.length.file)
+sox2.gr <- loadBedFile(oct4.bed.file, genome.length.file)
+@
+
+Now, \Robject{oct4.gr} and \Robject{sox2.gr} contains the R data structure (of class \Rclass{GenomicRanges}) that represents peaks from each Bed file.
+
+\subsection{Manipulation of genome annotation data}
+<<>>=
+oct4.fat <- fat(oct4.gr, 200)
+sox2.fat <- fat(sox2.gr, 200)
+@
+
+<<>>=
+oct4.unistd <- unifyStrand(oct4.fat)
+sox2.unistd <- unifyStrand(sox2.fat)
+@
+
+<<>>=
+oct4.cov <- coverage(oct4.unistd)
+sox2.cov <- coverage(sox2.unistd)
+@
+
+<<>>=
+oct4.bin500 <- lapply( oct4.cov, function(x) rleBinning(x, 500) )
+sox2.bin500 <- lapply( sox2.cov, function(x) rleBinning(x, 500) )
+@
+
+<<>>=
+oct4.bin500 <- flatRleList(oct4.bin500)
+sox2.bin500 <- flatRleList(sox2.bin500)
+@
+
+\subsection{Comparison two genome annoatation}
+\Rfunction{qugacomp} makes \Robject{QuGAcomp} for comparison between two
+genome annotation.
+<<>>=
+quga <- qugacomp(oct4.bin500, sox2.bin500)
+
+quga.mi   <- mutualInformation(quga)
+quga.dice <- dice(quga)
+quga.jac  <- jaccard(quga)
+quga.simp <- simpson(quga)
+
+quga.cos <- cosineCoef(quga)
+quga.cor <- pearsonCoef(quga)
+
+quga.chi <- chisq(quga)
+quga.phi <- phiCoef(quga)
+quga.c <- contingencyCcoef(quga)
+quga.v <- cramerCoef(quga)
+@
+
+\end{document}
