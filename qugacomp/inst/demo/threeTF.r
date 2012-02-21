@@ -3,7 +3,6 @@ library("corrplot")
 
 genome.length.file <- file.path(system.file(package="QuGAcomp"), "data", "mm9.info")
 
-
 oct4.bed.file <- file.path(
   system.file(package="QuGAcomp"),
   "data",
