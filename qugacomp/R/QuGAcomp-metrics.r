@@ -147,6 +147,7 @@ setMethod("chisq", "QuGAcomp",
     Oij <- crossTable(object)
     Eij <- outer(rowSums(Oij), colSums(Oij)) / sum(Oij)
     sum( (Oij-Eij)^2 / Eij )
+    #chisq.test(Oij)$p.value
   }    
 )
 
